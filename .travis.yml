@@ -1,23 +1,17 @@
 sudo: required
 
-env:
-  GO_VERSION="1.10"
-
 language: go
 
 services:
   - docker
+branches:
+  only:
+    - master  
 
-os:
-  - linux 
-
-before_install:
+install:
   - docker build -t jonathan99/go-base:1.0 .
 
-deploy:
-  provider: script
-  script: 
-    - "sh ./script/docker-push/docker-push.sh"
-    - docker run -it -p 8080:8000 --name api-go jonathan99/go-base:1.0
-    - docker ps -a
-    branch: master  
+script: 
+  - "sh ./script/docker-push/docker-push.sh"
+  - docker run -it -p 8080:8000 --name api-go jonathan99/go-base:1.0
+  - docker ps -a  
