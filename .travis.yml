@@ -8,10 +8,17 @@ branches:
   only:
     - master  
 
-install:
-  - docker build -t jonathan99/go-base:1.0 .
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker build -t $DOCKER_USERNAME/go-base:1.0 .
+      - docker images
+      - docker tag jonathan99/go-base:1.0 $DOCKER_USERNAME/go-base:1.0
+      - docker push $DOCKER_USERNAME/go-base:1.0
 
-script: 
-  - "sudo sh ./script/docker-push/docker-push.sh"
-  - docker run -it -p 8080:8000 --net=host --name api-go jonathan99/go-base:1.0
-  - docker ps -a  
+    - stage: test
+      script:
+      - docker run -it -p 8080:8000 --net=host --name api-go jonathan99/go-base:1.0
+      - docker ps -a
