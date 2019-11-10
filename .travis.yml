@@ -1,0 +1,28 @@
+sudo: required
+
+env:
+  GO_VERSION="1.10"
+  
+
+language: go
+
+services:
+  - docker
+
+os:
+  - linux 
+
+before_install:
+  - docker build -t jonathan99/go-base:1.0 .
+
+deploy:
+  provider: script
+  script: 
+    - "sh ./script/docker-push/docker-push.sh"
+    branch: master  
+  
+script:
+  - docker run -it -p 8080:8000 --name api-go jonathan99/go-base:1.0
+  - docker ps -a
+
+  
