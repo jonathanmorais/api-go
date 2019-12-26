@@ -5,7 +5,17 @@ import (
    "log"
    "net/http"
    "github.com/gorilla/mux"
+   "encoding/json"
 )
+
+type fruta struct {
+    nome string
+    tipo string
+    valor float32
+}
+
+type Frutas []fruta
+
 // primeiro eu declaro uma variavel importando funções newrouter e uma sub-função HandleFunc
 // isso serve como ponte entre o Client e o Server onde pode ser feito requests
 // depois aqui ocorre uma especie de interpolação entre a extremidade  / com alguma da função
@@ -22,8 +32,21 @@ func main() {
 
 // função Index onde o lado "Server" responde com alguma coisa
 func Index(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintln(w, "Welcome!")
+    frutas := fruta{
+         nome: "banana",
+         tipo: "banana da terra",
+         valor: 12.0,
+    }
+
+    ret, err := json.Marshal(frutas)
+
+    if err != nil {
+        fmt.Println(err)
+    }
+    fmt.Println(string(ret))
+    w.Write(ret)
 }
+
 
 func AbacateIndex(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintln(w, "Welcome Abacate!")
